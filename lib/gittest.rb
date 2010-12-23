@@ -1,6 +1,10 @@
 require 'rubygems'
 require 'autotest'
 
+# Force fast start option for autotest. Although not used directly here, hooks might 
+# do things like preparing test databases unless the fast start option is enabled.
+Autotest.respond_to?(:options) ? Autotest.options[:no_full_after_start] = true : $f = true
+
 class Gittest
 
   VERSION = '0.0.1'

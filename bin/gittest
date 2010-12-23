@@ -42,7 +42,7 @@ end
 gt = Gittest.new(options[:commit])
 
 # look for modified files
-if gt.new_or_modified_files.size == 0
+if gt.new_or_modified_files.empty?
   puts "No modified files, exiting"
   exit
 end
@@ -52,7 +52,10 @@ puts msg + ":"
 gt.new_or_modified_files.each {|f| puts "\t#{f}"}
 
 # look for files to test
-puts "No matching files to test, exiting" and exit if gt.files_to_test.empty?
+if gt.files_to_test.empty?
+  puts "No matching files to test, exiting"
+  exit 
+end
 msg = "#{gt.files_to_test.size} file" 
 msg << "s" unless gt.files_to_test.size == 1
 msg << " to test"
@@ -64,7 +67,7 @@ puts "Press ENTER to continue, or CTRL+C to quit"
 begin
   $stdin.gets # note: Kernel#gets assumes that ARGV contains a list of files from which to read next line
 rescue Interrupt
-  exit 1
+  exit
 end
 
 # run those tests baby
