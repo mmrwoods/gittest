@@ -12,7 +12,7 @@ you've created or changed, according to git diff.
 Typically, you just execute gittest on the command line. Run it with 
 the help option to see what other options are available:
 
-gittest --help
+  gittest --help
 
 Of note is the --commit option. You can use this to customise the
 commit argument to git diff, which defaults to 'HEAD', i.e. the last 
@@ -21,7 +21,7 @@ and want to run tests based on all the files you've changed in that
 branch, not just those that have been created or modified since the 
 last commit. For example:
 
-gittest --commit origin/master
+  gittest --commit origin/master
   
 You can also create a Gittest instance and both interrogate it and ask 
 it to run the tests (this is exactly what the executable does). Have a 
@@ -31,9 +31,9 @@ look at the code, it's pretty simple.
 
 It's a work in progress, and I haven't published the gem yet, so...
 
-git clone git://github.com/thickpaddy/gittest.git
-cd gittest
-rake install_gem
+  git clone git://github.com/thickpaddy/gittest.git
+  cd gittest
+  rake install_gem
 
 == License:
 
