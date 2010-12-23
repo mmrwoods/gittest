@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'optparse'
+require 'gittest'
+require 'rbconfig'
+
+options = {:commit => 'HEAD'}
+OptionParser.new do |opts|
+  opts.banner = "Usage: ./script/gittest [options]"
+  opts.on("-c MANDATORY", "--commit MANDATORY", "Commit argument for git diff command used to check for new or modified files (defaults to HEAD)") do |o|
+    options[:commit] = o
+  end
+  opts.on("-l", "--load", "Run pending migrations and load test database from schema before running tests (Rails only)") do |o|
+    options[:load] = o
+  end
+  opts.on("-p", "--prepare", "Purge test database and re-create by running all migrations before running tests (Rails only)") do |o|
+    options[:prepare] = o
+  end
+  opts.on("-t", "--trace", "Enable trace option when invoking rake tasks to load or prepare test database") do |o|
+    options[:trace] = o
+  end  
+end.parse!
+
+# exit if we're not in a git repository
+null_device = RbConfig::CONFIG['host_os'].match(/mswin|mingw/i) ? 'NUL' : '/dev/null'
+exit $?.exitstatus unless system("git rev-parse > #{null_device}") # note: git rev-parse will exit 0 if it's in a repo
+
+rake_options = options[:trace] ? '--trace' : ''
+if options[:prepare]
+  puts "Preparing test database..."
+  system "rake db:test:purge #{rake_options}"
+  system "rake db:migrate RAILS_ENV=test #{rake_options}"
+end
+if options[:load]
+  puts "Loading test database..."
+  system "rake db:migrate RAILS_ENV=test #{rake_options}"
+  system "rake db:test:load #{rake_options}"
+end
+
+# create an instance of Gittest to do the dirty work
+gt = Gittest.new(options[:commit])
+
+# look for modified files
+if gt.new_or_modified_files.size == 0
+  puts "No modified files, exiting"
+  exit
+end
+msg = "#{gt.new_or_modified_files.size} new or modified file" 
+msg << "s" unless gt.new_or_modified_files.size == 1
+puts msg + ":"
+gt.new_or_modified_files.each {|f| puts "\t#{f}"}
+
+# look for files to test
+puts "No matching files to test, exiting" and exit if gt.files_to_test.empty?
+msg = "#{gt.files_to_test.size} file" 
+msg << "s" unless gt.files_to_test.size == 1
+msg << " to test"
+puts msg + ":"
+puts "\t" + gt.files_to_test.map{|k,v| k}.sort.join("\n\t")
+
+# give user an option to quit now, before running the tests/specs
+puts "Press ENTER to continue, or CTRL+C to quit"
+begin
+  $stdin.gets # note: Kernel#gets assumes that ARGV contains a list of files from which to read next line
+rescue Interrupt
+  exit 1
+end
+
+# run those tests baby
+puts "Running tests and/or specs, please wait..." 
+gt.run_tests
+
