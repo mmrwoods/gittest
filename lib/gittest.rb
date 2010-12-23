@@ -1,14 +1,6 @@
 require 'rubygems'
 require 'autotest'
 
-# autotest options
-$f = true # never run the entire test/spec suite on startup
-$v = false
-$h = false
-$q = false
-$DEBUG = false
-$help = false
-
 class Gittest
 
   VERSION = '0.0.1'
