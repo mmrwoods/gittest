@@ -7,7 +7,7 @@ require 'rbconfig'
 
 options = {:commit => 'HEAD'}
 OptionParser.new do |opts|
-  opts.banner = "Usage: ./script/gittest [options]"
+  opts.banner = "Usage: gittest [options]"
   opts.on("-c MANDATORY", "--commit MANDATORY", "Commit argument for git diff command used to check for new or modified files (defaults to HEAD)") do |o|
     options[:commit] = o
   end
