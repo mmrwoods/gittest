@@ -47,6 +47,7 @@ class Gittest
   end
 
   def run_tests
+    @at.hook :run_command
     cmd = @at.make_test_cmd(files_to_test)
     # copied from Autotest#run_tests and updated to use ansi colours in TURN enabled test output and specs run with the format option set to specdoc
     colors = { :red => 31, :green => 32, :yellow => 33 }
