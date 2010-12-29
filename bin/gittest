@@ -3,7 +3,6 @@
 require 'rubygems'
 require 'optparse'
 require 'gittest'
-require 'rbconfig'
 
 options = {:commit => 'HEAD'}
 OptionParser.new do |opts|
@@ -22,9 +21,14 @@ OptionParser.new do |opts|
   end  
 end.parse!
 
-# exit if we're not in a git repository
-null_device = RbConfig::CONFIG['host_os'].match(/mswin|mingw/i) ? 'NUL' : '/dev/null'
-exit $?.exitstatus unless system("git rev-parse > #{null_device}") # note: git rev-parse will exit 0 if it's in a repo
+# create an instance of Gittest to do the dirty work
+begin
+  gt = Gittest.new(options[:commit])
+rescue LoadError => e
+  puts "LoadError: #{e.message}"
+  puts "Gittest failed to load, exiting"
+  exit 1
+end
 
 rake_options = options[:trace] ? '--trace' : ''
 if options[:prepare]
@@ -37,9 +41,6 @@ if options[:load]
   system "rake db:migrate RAILS_ENV=test #{rake_options}"
   system "rake db:test:load #{rake_options}"
 end
-
-# create an instance of Gittest to do the dirty work
-gt = Gittest.new(options[:commit])
 
 # look for modified files
 if gt.new_or_modified_files.empty?
