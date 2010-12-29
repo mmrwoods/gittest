@@ -16,7 +16,7 @@ OptionParser.new do |opts|
   opts.on("-p", "--prepare", "Purge test database and re-create by running all migrations before running tests (Rails only)") do |o|
     options[:prepare] = o
   end
-  opts.on("-t", "--trace", "Enable trace option when invoking rake tasks to load or prepare test database") do |o|
+  opts.on("-t", "--trace", "Enable full backtrace on exception") do |o|
     options[:trace] = o
   end  
 end.parse!
@@ -25,21 +25,25 @@ end.parse!
 begin
   gt = Gittest.new(options[:commit])
 rescue LoadError => e
-  puts "LoadError: #{e.message}"
-  puts "Gittest failed to load, exiting"
+  puts "LoadError: #{e.message}, exiting"
+  if options[:trace]
+    puts e.backtrace
+  else
+    puts "(see full trace by running command with --trace option)"
+  end
   exit 1
 end
 
 rake_options = options[:trace] ? '--trace' : ''
 if options[:prepare]
   puts "Preparing test database..."
-  system "rake db:test:purge #{rake_options}"
-  system "rake db:migrate RAILS_ENV=test #{rake_options}"
+  exit $?.exitstatus unless system "rake db:test:purge #{rake_options}"
+  exit $?.exitstatus unless system "rake db:migrate RAILS_ENV=test #{rake_options}"
 end
 if options[:load]
   puts "Loading test database..."
-  system "rake db:migrate RAILS_ENV=test #{rake_options}"
-  system "rake db:test:load #{rake_options}"
+  exit $?.exitstatus unless system "rake db:migrate RAILS_ENV=test #{rake_options}"
+  exit $?.exitstatus unless system "rake db:test:load #{rake_options}"
 end
 
 # look for modified files
