@@ -29,7 +29,11 @@ look at the code, it's pretty simple.
 
 == Install:
 
-It's a work in progress, and I haven't published the gem yet, so...
+The latest release should be available from rubygems.org
+
+  sudo gem install gittest
+
+To install directly from source...
 
   git clone git://github.com/thickpaddy/gittest.git
   cd gittest
