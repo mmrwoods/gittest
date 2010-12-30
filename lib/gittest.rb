@@ -4,7 +4,7 @@ require 'rbconfig'
 
 class Gittest
 
-  VERSION = '0.1.0'
+  VERSION = '0.1.1'
 
   attr_reader :commit, :test_mappings
 
