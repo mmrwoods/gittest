@@ -17,12 +17,14 @@ class Gittest
     cd_to_repository_root # note: I'm assuming that the repository root is the project root, and any .autotest file will be in the project root
     @at = Autotest.new
     @at.hook :initialize
+    @at.find_files # find known files on initialisation
     @test_mappings = @at.instance_eval { @test_mappings }
     @commit = commit
   end
 
-  # Reset the new_or_modified_files and files_to_test values
+  # Reset the known files and both new_or_modified_files and files_to_test values
   def reset
+    @at.find_files
     @new_or_modified_files = nil
     @files_to_test = nil
   end
