@@ -21,7 +21,7 @@ class Gittest
     @commit = commit
   end
 
-  # Reset the known files and both new_or_modified_files and files_to_test values
+  # Reset the new_or_modified_files and files_to_test values
   def reset
     @new_or_modified_files = nil
     @files_to_test = nil
