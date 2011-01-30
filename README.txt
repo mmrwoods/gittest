@@ -14,14 +14,14 @@ the help option to see what other options are available:
 
   gittest --help
 
-Of note is the --commit option. You can use this to customise the
+Of note is the 'commit' option. You can use this to customise the
 commit argument to git diff, which defaults to 'HEAD', i.e. the last 
 commit. This is really handy when you're working on a topic branch 
 and want to run tests based on all the files you've changed in that 
 branch, not just those that have been created or modified since the 
 last commit. For example:
 
-  gittest --commit origin/master
+  gittest -c origin/master
   
 You can also create a Gittest instance and both interrogate it and ask 
 it to run the tests (this is exactly what the executable does). Have a 
@@ -35,8 +35,6 @@ The latest release should be available from rubygems.org
 
 To install directly from source...
 
-  git clone git://github.com/thickpaddy/gittest.git
-  cd gittest
   rake install_gem
 
 == License:
