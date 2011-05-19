@@ -18,7 +18,11 @@ OptionParser.new do |opts|
   end
   opts.on("-t", "--trace", "Enable full backtrace on exception") do |o|
     options[:trace] = o
-  end  
+  end
+  opts.on("--version", "Show version info and exit") do |o|
+    puts "gittest version " + Gittest::VERSION
+    exit
+  end
 end.parse!
 
 # create an instance of Gittest to do the dirty work
